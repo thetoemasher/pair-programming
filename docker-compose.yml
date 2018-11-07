@@ -1,0 +1,42 @@
+version: '3'
+services:
+  react_server:
+    container_name: pairs-react-container
+    build:
+      context: .
+      dockerfile: Dockerfile-react-dev
+    image: pairs-react-image
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/var/public
+      - /var/public/node_modules
+  node_server:
+    container_name: pairs-server-container
+    build:
+      context: .
+      dockerfile: Dockerfile-server-dev
+    image: pairs-server-image
+    ports:
+      - 4815:4815
+    depends_on:
+      - postgresdb_server
+      - react_server
+      - redis_server
+    volumes:
+      - .:/var/server
+      - /var/server/node_modules
+  postgresdb_server:
+    container_name: pairs-pg-container
+    image: postgres:10.4
+    volumes:
+      - ./db/seed/:/docker-entrypoint-initdb.d/
+    environment:
+      POSTGRES_DB: devmtn
+      POSTGRES_USER: devmtn
+    ports:
+      - 5433:5432
+  redis_server:
+    container_name: pairs-redis-container
+    image: redis:3.2.11
+    restart: always

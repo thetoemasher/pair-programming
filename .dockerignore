@@ -1,0 +1,10 @@
+.git
+.gitignore
+id_rsa.enc
+README.md
+yarn.lock
+node_modules
+Dockerfile-dev
+Dockerfile-prod
+docker-compose.yml
+deploy.sh

@@ -1,0 +1,17 @@
+version: '3'
+services:
+  node_server:
+    container_name: pairs-server-container
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile-server-prod
+    image: pairs-server-image
+    ports:
+      - 4815:4815
+    depends_on:
+      - redis_server
+  redis_server:
+    container_name: pairs-redis-container
+    image: redis:3.2.11
+    restart: always
