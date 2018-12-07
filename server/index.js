@@ -17,7 +17,8 @@ const express = require('express')
     , pairsController = require('./controllers/pairsController.js')
     , cohortsController = require('./controllers/cohortsController.js')
     , RedisStore = require('connect-redis')(session)
-
+    , fs = require('fs')
+    , publicKey = fs.readFileSync(`${__dirname}/jwt_public_key`)
 
 const app = express();
 
@@ -49,7 +50,10 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(express.static(__dirname + '/../build'))
 
-passport.use('devmtn', new DevmtnStrategy(devmtnAuthConfig, function(jwtoken, user, done) {
+passport.use('devmtn', new DevmtnStrategy({
+    ...devmtnAuthConfig,
+    jwtSecret: publicKey
+    }, function(jwtoken, user, done) {
     let isInstructor = Devmtn.checkRoles(user, 'instructor')
         let isLead = Devmtn.checkRoles(user, 'lead_instructor')
         let isMentor = Devmtn.checkRoles(user, 'mentor')
